@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DirtLogic AI - Yard Reimagination</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button class="live-demo-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="3" fill="currentColor"/>
+                </svg>
+                LIVE DEMO
+            </button>
+            <h1 class="title">Experience DirtLogic AI</h1>
+            <p class="subtitle">Upload a photo of a yard (or use our sample) and let our Gemini-powered engine reimagine it in seconds.</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Side - Upload Section -->
+            <div class="left-section">
+                <div class="upload-section">
+                    <h3 class="section-title">1. UPLOAD SITE PHOTO</h3>
+                    
+                    <!-- HighLevel Form Embed Container -->
+                    <div id="ghl-form-container" class="ghl-embed">
+                        <!-- HighLevel form will be embedded here -->
+                        <!-- Placeholder upload UI -->
+                        <div class="upload-box" id="uploadBox">
+                            <div class="upload-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 15V3m0 0L8 7m4-4l4 4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <p class="upload-text">Click to upload or drag & drop</p>
+                            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prompt-section">
+                    <h3 class="section-title">2. DESIGN PROMPT</h3>
+                    <div class="prompt-box">
+                        <textarea 
+                            id="designPrompt" 
+                            class="prompt-textarea"
+                            placeholder="Describe your ideal yard design..."
+                        >Add a modern stone patio with a fire pit and drought-resistant plants.</textarea>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    GENERATE CONCEPT
+                </button>
+            </div>
+
+            <!-- Right Side - Preview Section -->
+            <div class="right-section">
+                <div class="preview-container" id="previewContainer">
+                    <div class="preview-placeholder" id="previewPlaceholder">
+                        <div class="preview-icon"></div>
+                        <p class="preview-text">Upload an image to start</p>
+                    </div>
+                    <img id="previewImage" class="preview-image" style="display: none;" alt="Preview">
+                    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Generating concept...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

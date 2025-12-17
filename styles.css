@@ -1,0 +1,298 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background-color: #000000;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 40px 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header Styles */
+.header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.live-demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: transform 0.2s;
+}
+
+.live-demo-btn:hover {
+    transform: scale(1.05);
+}
+
+.title {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #a0a0a0;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Main Content Layout */
+.main-content {
+    display: grid;
+    grid-template-columns: 450px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* Left Section */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.section-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #808080;
+    margin-bottom: 12px;
+}
+
+/* Upload Section */
+.upload-section {
+    margin-bottom: 8px;
+}
+
+.ghl-embed {
+    min-height: 200px;
+}
+
+.upload-box {
+    border: 2px dashed #404040;
+    border-radius: 8px;
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: #1a1a1a;
+}
+
+.upload-box:hover {
+    border-color: #606060;
+    background-color: #222222;
+}
+
+.upload-box.dragover {
+    border-color: #ffffff;
+    background-color: #2a2a2a;
+}
+
+.upload-icon {
+    margin-bottom: 16px;
+}
+
+.upload-icon svg {
+    width: 40px;
+    height: 40px;
+    color: #808080;
+}
+
+.upload-text {
+    color: #a0a0a0;
+    font-size: 14px;
+}
+
+/* Prompt Section */
+.prompt-section {
+    margin-bottom: 8px;
+}
+
+.prompt-box {
+    background-color: #1a2332;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #2a3a4a;
+}
+
+.prompt-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    outline: none;
+}
+
+.prompt-textarea::placeholder {
+    color: #606060;
+}
+
+/* Generate Button */
+.generate-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #808080;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.generate-btn:hover {
+    background-color: #a0a0a0;
+    transform: translateY(-2px);
+}
+
+.generate-btn:active {
+    transform: translateY(0);
+}
+
+.generate-btn:disabled {
+    background-color: #404040;
+    color: #606060;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Right Section - Preview */
+.right-section {
+    position: relative;
+}
+
+.preview-container {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    min-height: 500px;
+}
+
+.preview-placeholder {
+    text-align: center;
+}
+
+.preview-icon {
+    width: 120px;
+    height: 120px;
+    background-color: #808080;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+}
+
+.preview-text {
+    color: #606060;
+    font-size: 16px;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #404040;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .title {
+        font-size: 42px;
+    }
+
+    .preview-container {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 20px 16px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .upload-box {
+        padding: 40px 20px;
+    }
+
+    .preview-container {
+        min-height: 300px;
+    }
+}
