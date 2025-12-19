@@ -15,7 +15,7 @@ const previewPlaceholder = document.getElementById('previewPlaceholder');
 const previewImage = document.getElementById('previewImage');
 const loadingOverlay = document.getElementById('loadingOverlay');
 
-/* NEW: Filename input */
+/* Filename input */
 const fileNameInput = document.getElementById('fileNameInput');
 
 // Initialize
@@ -25,20 +25,16 @@ function init() {
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // Upload box click
     uploadBox.addEventListener('click', () => {
         fileInput.click();
     });
 
-    // File input change
     fileInput.addEventListener('change', handleFileSelect);
 
-    // Drag and drop
     uploadBox.addEventListener('dragover', handleDragOver);
     uploadBox.addEventListener('dragleave', handleDragLeave);
     uploadBox.addEventListener('drop', handleDrop);
 
-    // Generate button
     generateBtn.addEventListener('click', handleGenerate);
 }
 
@@ -93,7 +89,7 @@ function handleDrop(event) {
     }
 }
 
-// Generate timestamp in yyyyMMdd-HHmmss format
+// Generate timestamp
 function generateTimestamp() {
     const now = new Date();
     const yyyy = now.getFullYear();
@@ -102,7 +98,6 @@ function generateTimestamp() {
     const HH = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
-    
     return `${yyyy}${MM}${dd}-${HH}${mm}${ss}`;
 }
 
@@ -119,26 +114,19 @@ async function handleGenerate() {
         return;
     }
 
-    /* NEW: Read filename from textbox */
     const filename = fileNameInput ? fileNameInput.value.trim() : '';
 
-    // Show loading
     showLoading(true);
     generateBtn.disabled = true;
 
     try {
-        // Generate unified timestamp
         const timestamp = generateTimestamp();
         const inputFilename = `in_${timestamp}.jpg`;
         const outputFilename = `out_${timestamp}.jpg`;
 
-        // Convert file to base64
         const imageBase64 = await fileToBase64(uploadedFile);
-        
-        // Remove data:image prefix to get pure base64
         const base64Data = imageBase64.split(',')[1];
 
-        // Send to n8n webhook
         const result = await sendToN8N(
             base64Data,
             prompt,
@@ -148,13 +136,24 @@ async function handleGenerate() {
             filename
         );
 
-        // Display result
-        if (result && result.outputImageUrl) {
-            displayPreviewImage(result.outputImageUrl);
+        /* ================================
+           NEW: DISPLAY IMAGE FROM WEBHOOK
+           EXPECTS A GHL HOSTED IMAGE URL
+        ================================= */
+
+        const ghlImageUrl =
+            result?.outputImageUrl ||
+            result?.imageUrl ||
+            result?.ghlImageUrl ||
+            result?.url;
+
+        if (ghlImageUrl) {
+            displayPreviewImage(ghlImageUrl);
             alert('Concept generated successfully!');
         } else {
-            throw new Error('No generated image received');
+            throw new Error('No image URL returned from webhook');
         }
+
     } catch (error) {
         console.error('Error generating concept:', error);
         alert('Error generating concept. Please try again.');
@@ -173,12 +172,12 @@ async function sendToN8N(imageBase64, prompt, timestamp, inputFilename, outputFi
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                imageBase64: imageBase64,
-                prompt: prompt,
-                timestamp: timestamp,
-                inputFilename: inputFilename,
-                outputFilename: outputFilename,
-                filename: filename
+                imageBase64,
+                prompt,
+                timestamp,
+                inputFilename,
+                outputFilename,
+                filename
             })
         });
 
