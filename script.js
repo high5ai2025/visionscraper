@@ -15,6 +15,9 @@ const previewPlaceholder = document.getElementById('previewPlaceholder');
 const previewImage = document.getElementById('previewImage');
 const loadingOverlay = document.getElementById('loadingOverlay');
 
+/* NEW: Filename input */
+const fileNameInput = document.getElementById('fileNameInput');
+
 // Initialize
 function init() {
     setupEventListeners();
@@ -116,6 +119,9 @@ async function handleGenerate() {
         return;
     }
 
+    /* NEW: Read filename from textbox */
+    const filename = fileNameInput ? fileNameInput.value.trim() : '';
+
     // Show loading
     showLoading(true);
     generateBtn.disabled = true;
@@ -133,7 +139,14 @@ async function handleGenerate() {
         const base64Data = imageBase64.split(',')[1];
 
         // Send to n8n webhook
-        const result = await sendToN8N(base64Data, prompt, timestamp, inputFilename, outputFilename);
+        const result = await sendToN8N(
+            base64Data,
+            prompt,
+            timestamp,
+            inputFilename,
+            outputFilename,
+            filename
+        );
 
         // Display result
         if (result && result.outputImageUrl) {
@@ -152,7 +165,7 @@ async function handleGenerate() {
 }
 
 // Send to n8n webhook
-async function sendToN8N(imageBase64, prompt, timestamp, inputFilename, outputFilename) {
+async function sendToN8N(imageBase64, prompt, timestamp, inputFilename, outputFilename, filename) {
     try {
         const response = await fetch(CONFIG.N8N_WEBHOOK, {
             method: 'POST',
@@ -164,7 +177,8 @@ async function sendToN8N(imageBase64, prompt, timestamp, inputFilename, outputFi
                 prompt: prompt,
                 timestamp: timestamp,
                 inputFilename: inputFilename,
-                outputFilename: outputFilename
+                outputFilename: outputFilename,
+                filename: filename
             })
         });
 
