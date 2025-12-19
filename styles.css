@@ -296,3 +296,32 @@ body {
         min-height: 300px;
     }
 }
+
+/* ========================= */
+/* NEW: Filename Input Styles */
+/* ========================= */
+
+.filename-section {
+    margin-bottom: 8px;
+}
+
+.filename-box {
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #2a2a2a;
+}
+
+.filename-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+}
+
+.filename-input::placeholder {
+    color: #606060;
+}
