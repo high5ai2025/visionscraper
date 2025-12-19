@@ -63,6 +63,7 @@
                             id="designPrompt" 
                             class="prompt-textarea"
                             placeholder="Describe your ideal yard design..."
+                            oninput="this.classList.remove('example-prompt'); this.value=this.value.replace(/^Add a modern stone patio with a fire pit and drought-resistant plants\./,'')"
                         >Add a modern stone patio with a fire pit and drought-resistant plants.</textarea>
                     </div>
                 </div>
@@ -95,3 +96,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
