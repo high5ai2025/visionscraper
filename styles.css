@@ -325,3 +325,252 @@ body {
 .filename-input::placeholder {
     color: #606060;
 }
+
+/* ========================= */
+/* AUTH SYSTEM STYLES        */
+/* ========================= */
+
+/* Auth Banner - slides down from top, slides up when logged in */
+.auth-banner {
+    width: 100%;
+    background-color: #0d0d0d;
+    border-bottom: 1px solid #222;
+    overflow: hidden;
+    max-height: 400px;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    opacity: 1;
+    margin-bottom: 0;
+}
+
+.auth-banner.auth-hidden {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.auth-banner-inner {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 32px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Tab Slider */
+.auth-tabs {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 24px;
+    padding: 4px;
+    position: relative;
+    border: 1px solid #2a2a2a;
+    gap: 0;
+}
+
+.auth-tab {
+    background: none;
+    border: none;
+    color: #606060;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 8px 28px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: color 0.25s ease;
+    position: relative;
+    z-index: 2;
+    font-family: inherit;
+}
+
+.auth-tab.active {
+    color: #000000;
+}
+
+.auth-tab-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background-color: #ffffff;
+    border-radius: 20px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+.auth-tab-slider.slide-right {
+    transform: translateX(100%);
+}
+
+/* Auth Form */
+.auth-form {
+    width: 100%;
+}
+
+.auth-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.auth-input {
+    width: 100%;
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.auth-input:focus {
+    border-color: #505050;
+}
+
+.auth-input::placeholder {
+    color: #505050;
+}
+
+.auth-submit-btn {
+    width: 100%;
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background-color 0.2s, transform 0.15s;
+    margin-top: 4px;
+}
+
+.auth-submit-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.auth-submit-btn:active {
+    transform: translateY(0);
+}
+
+.auth-submit-btn:disabled {
+    background-color: #404040;
+    color: #606060;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.auth-switch-text {
+    text-align: center;
+    font-size: 12px;
+    color: #606060;
+}
+
+.auth-link {
+    color: #a0a0a0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s;
+}
+
+.auth-link:hover {
+    color: #ffffff;
+}
+
+.auth-message {
+    font-size: 13px;
+    text-align: center;
+    min-height: 18px;
+    transition: color 0.2s;
+}
+
+.auth-message.success {
+    color: #4ade80;
+}
+
+.auth-message.error {
+    color: #f87171;
+}
+
+.auth-message.info {
+    color: #60a5fa;
+}
+
+/* User Bar (shown when logged in) */
+.user-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #0d0d0d;
+    border-bottom: 1px solid #1a1a1a;
+    margin-bottom: 0;
+}
+
+.user-email-label {
+    font-size: 12px;
+    color: #808080;
+    letter-spacing: 0.3px;
+}
+
+.user-email-label span {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.logout-btn {
+    background: none;
+    border: 1px solid #333;
+    color: #808080;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    border-color: #606060;
+    color: #ffffff;
+}
+
+/* App locked state - greyed out & non-interactive */
+.app-locked {
+    pointer-events: none;
+    opacity: 0.25;
+    filter: blur(1px);
+    user-select: none;
+    transition: opacity 0.5s ease, filter 0.5s ease;
+    margin-top: 0;
+}
+
+.app-unlocked {
+    pointer-events: auto;
+    opacity: 1;
+    filter: none;
+    transition: opacity 0.5s ease, filter 0.5s ease;
+    margin-top: 0;
+}
+
+/* Body top padding adjustment when user bar shown */
+body {
+    padding-top: 0;
+}
+
+.container {
+    padding-top: 40px;
+}
