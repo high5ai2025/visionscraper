@@ -7,7 +7,48 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Auth Banner (top, always visible when logged out) -->
+    <div id="authBanner" class="auth-banner">
+        <div class="auth-banner-inner">
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+                <div class="auth-tab-slider" id="tabSlider"></div>
+                <button class="auth-tab" id="tabSignin" onclick="switchTab('signin')">Sign In</button>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div class="auth-form" id="signupForm">
+                <div class="auth-fields">
+                    <input type="text" class="auth-input" id="signupName" placeholder="Full name" />
+                    <input type="email" class="auth-input" id="signupEmail" placeholder="Email address" />
+                    <input type="password" class="auth-input" id="signupPassword" placeholder="Password" />
+                    <button class="auth-submit-btn" id="signupBtn" onclick="handleSignup()">Create Account</button>
+                </div>
+                <p class="auth-switch-text">Already have an account? <span class="auth-link" onclick="switchTab('signin')">Sign in</span></p>
+            </div>
+
+            <!-- Sign In Form -->
+            <div class="auth-form" id="signinForm" style="display:none;">
+                <div class="auth-fields">
+                    <input type="email" class="auth-input" id="signinEmail" placeholder="Email address" />
+                    <input type="password" class="auth-input" id="signinPassword" placeholder="Password" />
+                    <button class="auth-submit-btn" id="signinBtn" onclick="handleSignin()">Sign In</button>
+                </div>
+                <p class="auth-switch-text"><span class="auth-link" onclick="handleForgotPassword()">Forgot password?</span></p>
+            </div>
+
+            <div class="auth-message" id="authMessage"></div>
+        </div>
+    </div>
+
+    <!-- User Bar (shown when logged in) -->
+    <div id="userBar" class="user-bar" style="display:none;">
+        <span class="user-email-label" id="userEmailLabel"></span>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+
+    <!-- Main App (blurred/disabled when logged out) -->
+    <div id="appContent" class="container app-locked">
         <!-- Header -->
         <div class="header">
             <button class="live-demo-btn">
@@ -26,11 +67,7 @@
             <div class="left-section">
                 <div class="upload-section">
                     <h3 class="section-title">1. UPLOAD SITE PHOTO</h3>
-                    
-                    <!-- HighLevel Form Embed Container -->
                     <div id="ghl-form-container" class="ghl-embed">
-                        <!-- HighLevel form will be embedded here -->
-                        <!-- Placeholder upload UI -->
                         <div class="upload-box" id="uploadBox">
                             <div class="upload-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -43,7 +80,7 @@
                     </div>
                 </div>
 
-                <!-- NEW: Filename Section -->
+                <!-- Filename Section -->
                 <div class="filename-section">
                     <h3 class="section-title">2. FILE NAME</h3>
                     <div class="filename-box">
@@ -96,4 +133,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
