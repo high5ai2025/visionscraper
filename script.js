@@ -113,8 +113,6 @@ async function handleSignup() {
             document.getElementById('signupName').value     = '';
             document.getElementById('signupEmail').value    = '';
             document.getElementById('signupPassword').value = '';
-            // Auto-switch to sign in after short delay
-            setTimeout(() => switchTab('signin'), 2000);
         } else {
             // Map and display reason from webhook JSON body
             showAuthMessage(extractErrorReason(data, 'Sign up failed. Please try again.'), 'error');
