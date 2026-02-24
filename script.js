@@ -67,6 +67,21 @@ function clearAuthMessage() {
     authMessage.className = 'auth-message';
 }
 
+// Extract the most meaningful error reason from any webhook JSON response
+function extractErrorReason(data, fallback) {
+    return data.message
+        || data.error
+        || data.msg
+        || data.reason
+        || data.error_description
+        || data.errorMessage
+        || fallback;
+}
+
+// ========================
+// SIGN UP
+// ========================
+
 async function handleSignup() {
     const name     = document.getElementById('signupName').value.trim();
     const email    = document.getElementById('signupEmail').value.trim();
@@ -91,12 +106,18 @@ async function handleSignup() {
 
         const data = await res.json().catch(() => ({}));
 
-        if (res.ok && !data.error) {
-            showAuthMessage(data.message || 'Account created! You can now sign in.', 'success');
-            // Auto-switch to sign in
-            setTimeout(() => switchTab('signin'), 1500);
+        // Wait for webhook response — success if ok and no error signals
+        if (res.ok && data.status !== 'error' && !data.error) {
+            showAuthMessage(data.message || 'Account created! Please check your email to confirm.', 'success');
+            // Clear fields
+            document.getElementById('signupName').value     = '';
+            document.getElementById('signupEmail').value    = '';
+            document.getElementById('signupPassword').value = '';
+            // Auto-switch to sign in after short delay
+            setTimeout(() => switchTab('signin'), 2000);
         } else {
-            showAuthMessage(data.message || data.error || 'Sign up failed. Please try again.', 'error');
+            // Map and display reason from webhook JSON body
+            showAuthMessage(extractErrorReason(data, 'Sign up failed. Please try again.'), 'error');
         }
     } catch (err) {
         showAuthMessage('Network error. Please try again.', 'error');
@@ -105,6 +126,10 @@ async function handleSignup() {
         btn.textContent = 'Create Account';
     }
 }
+
+// ========================
+// SIGN IN
+// ========================
 
 async function handleSignin() {
     const email    = document.getElementById('signinEmail').value.trim();
@@ -129,7 +154,8 @@ async function handleSignin() {
 
         const data = await res.json().catch(() => ({}));
 
-        if (res.ok && !data.error) {
+        // Wait for webhook response — success if ok and no error signals
+        if (res.ok && data.status !== 'error' && !data.error) {
             currentUser = {
                 email: data.email || email,
                 name:  data.name  || '',
@@ -137,7 +163,8 @@ async function handleSignin() {
             };
             onLoginSuccess();
         } else {
-            showAuthMessage(data.message || data.error || 'Invalid credentials.', 'error');
+            // Map and display reason from webhook JSON body
+            showAuthMessage(extractErrorReason(data, 'Invalid email or password.'), 'error');
         }
     } catch (err) {
         showAuthMessage('Network error. Please try again.', 'error');
@@ -146,6 +173,10 @@ async function handleSignin() {
         btn.textContent = 'Sign In';
     }
 }
+
+// ========================
+// FORGOT PASSWORD
+// ========================
 
 async function handleForgotPassword() {
     const email = document.getElementById('signinEmail').value.trim();
@@ -166,11 +197,118 @@ async function handleForgotPassword() {
         });
 
         const data = await res.json().catch(() => ({}));
-        showAuthMessage(data.message || 'If that email exists, a reset link has been sent.', 'success');
+
+        // Wait for webhook response — success if ok and no error signals
+        if (res.ok && data.status !== 'error' && !data.error) {
+            showAuthMessage(data.message || 'Reset link verified. Enter your new password below.', 'success');
+            // Open new password modal on success
+            openResetModal(email);
+        } else {
+            // Map and display reason from webhook JSON body
+            showAuthMessage(extractErrorReason(data, 'Could not send reset link. Please try again.'), 'error');
+        }
     } catch (err) {
         showAuthMessage('Network error. Please try again.', 'error');
     }
 }
+
+// ========================
+// RESET PASSWORD MODAL
+// ========================
+
+function openResetModal(email) {
+    // Remove any existing modal
+    const existing = document.getElementById('resetModal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'resetModal';
+    modal.className = 'reset-modal-overlay';
+    modal.innerHTML = `
+        <div class="reset-modal-box">
+            <h3 class="reset-modal-title">Set New Password</h3>
+            <p class="reset-modal-subtitle">Updating password for <strong>${email}</strong></p>
+            <div class="reset-fields">
+                <input type="password" id="resetNewPassword"     class="auth-input" placeholder="New password" />
+                <input type="password" id="resetConfirmPassword" class="auth-input" placeholder="Confirm new password" />
+                <button class="auth-submit-btn" id="resetSubmitBtn" onclick="handleResetSubmit('${email}')">Update Password</button>
+            </div>
+            <div class="auth-message" id="resetMessage"></div>
+            <button class="reset-modal-close" onclick="closeResetModal()">Cancel</button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    // Animate in on next frame
+    requestAnimationFrame(() => modal.classList.add('reset-modal-visible'));
+}
+
+function closeResetModal() {
+    const modal = document.getElementById('resetModal');
+    if (!modal) return;
+    modal.classList.remove('reset-modal-visible');
+    setTimeout(() => modal.remove(), 300);
+}
+
+async function handleResetSubmit(email) {
+    const newPassword     = document.getElementById('resetNewPassword').value;
+    const confirmPassword = document.getElementById('resetConfirmPassword').value;
+    const btn             = document.getElementById('resetSubmitBtn');
+    const msgEl           = document.getElementById('resetMessage');
+
+    const showResetMsg = (text, type) => {
+        msgEl.textContent = text;
+        msgEl.className = 'auth-message ' + type;
+    };
+
+    if (!newPassword || !confirmPassword) {
+        showResetMsg('Please fill in both fields.', 'error');
+        return;
+    }
+    if (newPassword !== confirmPassword) {
+        showResetMsg('Passwords do not match.', 'error');
+        return;
+    }
+    if (newPassword.length < 6) {
+        showResetMsg('Password must be at least 6 characters.', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Updating...';
+    showResetMsg('', '');
+
+    try {
+        const res = await fetch(CONFIG.N8N_FORGOT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, newPassword, action: 'reset' })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.status !== 'error' && !data.error) {
+            showResetMsg(data.message || 'Password updated successfully!', 'success');
+            // Close modal and redirect to sign in
+            setTimeout(() => {
+                closeResetModal();
+                switchTab('signin');
+                showAuthMessage('Password updated. Please sign in.', 'success');
+            }, 1800);
+        } else {
+            showResetMsg(extractErrorReason(data, 'Failed to update password. Please try again.'), 'error');
+        }
+    } catch (err) {
+        showResetMsg('Network error. Please try again.', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+    }
+}
+
+// ========================
+// LOGIN / LOGOUT
+// ========================
 
 function onLoginSuccess() {
     // Hide auth banner with slide-up animation
