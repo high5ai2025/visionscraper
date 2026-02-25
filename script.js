@@ -1,34 +1,35 @@
 // Configuration
 const CONFIG = {
-    N8N_WEBHOOK: 'https://high5ai.app.n8n.cloud/webhook/dirtlogic-ai',
-    N8N_SIGNUP:  'https://high5ai.app.n8n.cloud/webhook/signup',
-    N8N_SIGNIN:  'https://high5ai.app.n8n.cloud/webhook/signin',
-    N8N_FORGOT:  'https://high5ai.app.n8n.cloud/webhook/forgot-password',
+    N8N_WEBHOOK:   'https://high5ai.app.n8n.cloud/webhook/dirtlogic-ai',
+    N8N_SIGNUP:    'https://high5ai.app.n8n.cloud/webhook/signup',
+    N8N_SIGNIN:    'https://high5ai.app.n8n.cloud/webhook/signin',
+    N8N_FORGOT:    'https://high5ai.app.n8n.cloud/webhook/forgot-password',
+    APPS_SCRIPT:   'https://script.google.com/macros/s/AKfycbzdnkRkcb9rYjI2Zk5FXKMyfVuvgllgIgCDNMniRIuKYY5KHxdz-z1XfAzPJEQl7yOgRw/exec',
     IDLE_TIMEOUT_MS: 3 * 60 * 1000 // 3 minutes
 };
 
 // State management
 let uploadedFile = null;
-let currentUser = null; // { email, name, token, ... }
-let idleTimer = null;
+let currentUser  = null; // { email, name, token, plan, uses, limit }
+let idleTimer    = null;
 
 // DOM Elements
-const uploadBox       = document.getElementById('uploadBox');
-const fileInput       = document.getElementById('fileInput');
-const generateBtn     = document.getElementById('generateBtn');
-const designPrompt    = document.getElementById('designPrompt');
+const uploadBox          = document.getElementById('uploadBox');
+const fileInput          = document.getElementById('fileInput');
+const generateBtn        = document.getElementById('generateBtn');
+const designPrompt       = document.getElementById('designPrompt');
 const previewPlaceholder = document.getElementById('previewPlaceholder');
-const previewImage    = document.getElementById('previewImage');
-const loadingOverlay  = document.getElementById('loadingOverlay');
-const fileNameInput   = document.getElementById('fileNameInput');
+const previewImage       = document.getElementById('previewImage');
+const loadingOverlay     = document.getElementById('loadingOverlay');
+const fileNameInput      = document.getElementById('fileNameInput');
 
 // Auth DOM
-const authBanner      = document.getElementById('authBanner');
-const userBar         = document.getElementById('userBar');
-const userEmailLabel  = document.getElementById('userEmailLabel');
-const appContent      = document.getElementById('appContent');
-const authMessage     = document.getElementById('authMessage');
-const tabSlider       = document.getElementById('tabSlider');
+const authBanner     = document.getElementById('authBanner');
+const userBar        = document.getElementById('userBar');
+const userEmailLabel = document.getElementById('userEmailLabel');
+const appContent     = document.getElementById('appContent');
+const authMessage    = document.getElementById('authMessage');
+const tabSlider      = document.getElementById('tabSlider');
 
 // ========================
 // AUTH LOGIC
@@ -157,8 +158,13 @@ async function handleSignin() {
             currentUser = {
                 email: data.email || email,
                 name:  data.name  || '',
-                token: data.token || ''
+                token: data.token || '',
+                plan:  '',
+                uses:  '',
+                limit: ''
             };
+            // Fetch plan/uses/limit from Apps Script before showing user bar
+            await fetchUserStats(currentUser.email);
             onLoginSuccess();
         } else {
             // Map and display reason from webhook JSON body
@@ -305,6 +311,42 @@ async function handleResetSubmit(email) {
 }
 
 // ========================
+// APPS SCRIPT — FETCH USER STATS (login trigger)
+// Called after successful sign in. Sends email, receives plan/uses/limit.
+// ========================
+
+async function fetchUserStats(email) {
+    try {
+        const url = CONFIG.APPS_SCRIPT
+            + '?action=getStats&email=' + encodeURIComponent(email);
+        const res  = await fetch(url);
+        const data = await res.json().catch(() => ({}));
+
+        if (data && data.plan) {
+            currentUser.plan  = (data.plan  || '').toUpperCase();
+            currentUser.uses  = data.uses  !== undefined ? data.uses  : '';
+            currentUser.limit = data.limit !== undefined ? data.limit : '';
+        }
+    } catch (err) {
+        // Non-fatal — user bar will show blanks for plan/uses/limit
+        console.warn('fetchUserStats failed:', err);
+    }
+}
+
+// Update the user bar display (call after stats change)
+function updateUserBar() {
+    const plan  = currentUser.plan  || '—';
+    const uses  = currentUser.uses  !== '' ? currentUser.uses  : '—';
+    const limit = currentUser.limit !== '' ? currentUser.limit : '—';
+    const limitDisplay = plan === 'PRO' ? 'Unlimited' : `${uses} / ${limit}`;
+
+    userEmailLabel.innerHTML =
+        `user: <span>${currentUser.email}</span>` +
+        `&nbsp;&nbsp;PLAN: <span>${plan}</span>` +
+        `&nbsp;&nbsp;USES: <span class="stat-uses">${limitDisplay}</span>`;
+}
+
+// ========================
 // LOGIN / LOGOUT
 // ========================
 
@@ -312,9 +354,9 @@ function onLoginSuccess() {
     // Hide auth banner with slide-up animation
     authBanner.classList.add('auth-hidden');
 
-    // Show user bar
+    // Show user bar with plan/uses/limit
     userBar.style.display = 'flex';
-    userEmailLabel.innerHTML = `user: <span>${currentUser.email}</span>`;
+    updateUserBar();
 
     // Unlock app
     appContent.classList.remove('app-locked');
@@ -458,6 +500,10 @@ function generateTimestamp() {
     return `${yyyy}${MM}${dd}-${HH}${mm}${ss}`;
 }
 
+// ========================
+// GENERATE — rerouted through Apps Script usage check first
+// ========================
+
 async function handleGenerate() {
     if (!uploadedFile) {
         alert('Please upload an image first');
@@ -476,33 +522,20 @@ async function handleGenerate() {
     generateBtn.disabled = true;
 
     try {
-        const timestamp = generateTimestamp();
+        const timestamp      = generateTimestamp();
         const inputFilename  = `in_${timestamp}.jpg`;
         const outputFilename = `out_${timestamp}.jpg`;
 
         const imageBase64 = await fileToBase64(uploadedFile);
         const base64Data  = imageBase64.split(',')[1];
 
-        const result = await sendToN8N(
-            base64Data,
-            prompt,
-            timestamp,
-            inputFilename,
-            outputFilename,
-            filename
-        );
-
-        const ghlImageUrl =
-            result?.outputImageUrl ||
-            result?.imageUrl ||
-            result?.ghlImageUrl ||
-            result?.url;
-
-        if (ghlImageUrl) {
-            displayPreviewImage(ghlImageUrl);
-            alert('Concept generated successfully!');
+        // Step 1 — Ask Apps Script to check uses vs limit
+        // PRO plan skips the check entirely
+        if (currentUser.plan === 'PRO') {
+            // Go straight to N8N
+            await executeGenerate(base64Data, prompt, timestamp, inputFilename, outputFilename, filename);
         } else {
-            throw new Error('No image URL returned from webhook');
+            await checkUsageAndGenerate(base64Data, prompt, timestamp, inputFilename, outputFilename, filename);
         }
 
     } catch (error) {
@@ -511,6 +544,58 @@ async function handleGenerate() {
     } finally {
         showLoading(false);
         generateBtn.disabled = false;
+    }
+}
+
+// Check usage via Apps Script then either proceed or show limit message
+async function checkUsageAndGenerate(base64Data, prompt, timestamp, inputFilename, outputFilename, filename) {
+    const url = CONFIG.APPS_SCRIPT
+        + '?action=checkAndIncrement&email=' + encodeURIComponent(currentUser.email);
+
+    const res  = await fetch(url);
+    const data = await res.json().catch(() => ({}));
+
+    if (data.status === 'ok') {
+        // Apps Script confirmed usage is within limit and has incremented — proceed to N8N
+        // Update local uses display
+        currentUser.uses = data.uses !== undefined ? data.uses : currentUser.uses;
+        updateUserBar();
+        await executeGenerate(base64Data, prompt, timestamp, inputFilename, outputFilename, filename);
+
+    } else if (data.status === 'limit_reached') {
+        // Show limit reached message with next refresh date
+        const nextRefresh = data.nextRefresh || 'the 1st of next month';
+        showLoading(false);
+        generateBtn.disabled = false;
+        alert(`LIMIT REACHED. Next refresh will be on ${nextRefresh}.`);
+
+    } else {
+        throw new Error(data.message || 'Usage check failed.');
+    }
+}
+
+// Execute the actual N8N call — payload 100% unchanged
+async function executeGenerate(base64Data, prompt, timestamp, inputFilename, outputFilename, filename) {
+    const result = await sendToN8N(
+        base64Data,
+        prompt,
+        timestamp,
+        inputFilename,
+        outputFilename,
+        filename
+    );
+
+    const ghlImageUrl =
+        result?.outputImageUrl ||
+        result?.imageUrl       ||
+        result?.ghlImageUrl    ||
+        result?.url;
+
+    if (ghlImageUrl) {
+        displayPreviewImage(ghlImageUrl);
+        alert('Concept generated successfully!');
+    } else {
+        throw new Error('No image URL returned from webhook');
     }
 }
 
