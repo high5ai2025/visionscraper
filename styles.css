@@ -655,3 +655,284 @@ body {
 .container {
     padding-top: 40px;
 }
+
+/* ========================= */
+/* THEME TOGGLE BUTTON       */
+/* ========================= */
+
+.theme-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 10000;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 50px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #a0a0a0;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.theme-toggle:hover {
+    border-color: #555;
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+.theme-toggle-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* ========================= */
+/* LIGHT THEME (Facebook)    */
+/* ========================= */
+
+body.light-theme {
+    background-color: #f0f2f5;
+    color: #1c1e21;
+}
+
+body.light-theme .theme-toggle {
+    background-color: #ffffff;
+    border-color: #dddfe2;
+    color: #606770;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+body.light-theme .theme-toggle:hover {
+    border-color: #1877f2;
+    color: #1877f2;
+}
+
+/* Auth Banner */
+body.light-theme .auth-banner {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddfe2;
+}
+
+body.light-theme .auth-tabs {
+    background-color: #f0f2f5;
+    border-color: #dddfe2;
+}
+
+body.light-theme .auth-tab {
+    color: #606770;
+}
+
+body.light-theme .auth-tab.active {
+    color: #ffffff;
+}
+
+body.light-theme .auth-tab-slider {
+    background-color: #1877f2;
+}
+
+body.light-theme .auth-input {
+    background-color: #f0f2f5;
+    border-color: #dddfe2;
+    color: #1c1e21;
+}
+
+body.light-theme .auth-input:focus {
+    border-color: #1877f2;
+}
+
+body.light-theme .auth-input::placeholder {
+    color: #8a8d91;
+}
+
+body.light-theme .auth-submit-btn {
+    background-color: #1877f2;
+    color: #ffffff;
+}
+
+body.light-theme .auth-submit-btn:hover {
+    background-color: #166fe5;
+}
+
+body.light-theme .auth-submit-btn:disabled {
+    background-color: #bcc0c4;
+    color: #ffffff;
+}
+
+body.light-theme .auth-switch-text {
+    color: #606770;
+}
+
+body.light-theme .auth-link {
+    color: #1877f2;
+}
+
+body.light-theme .auth-link:hover {
+    color: #166fe5;
+}
+
+/* User Bar */
+body.light-theme .user-bar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddfe2;
+}
+
+body.light-theme .user-email-label {
+    color: #606770;
+}
+
+body.light-theme .user-email-label span {
+    color: #1877f2;
+}
+
+body.light-theme .logout-btn {
+    border-color: #dddfe2;
+    color: #606770;
+}
+
+body.light-theme .logout-btn:hover {
+    border-color: #1877f2;
+    color: #1877f2;
+}
+
+/* Header */
+body.light-theme .live-demo-btn {
+    background-color: #1877f2;
+    color: #ffffff;
+}
+
+body.light-theme .title {
+    color: #1c1e21;
+}
+
+body.light-theme .subtitle {
+    color: #606770;
+}
+
+body.light-theme .section-title {
+    color: #8a8d91;
+}
+
+/* Upload Box */
+body.light-theme .upload-box {
+    background-color: #ffffff;
+    border-color: #dddfe2;
+}
+
+body.light-theme .upload-box:hover {
+    border-color: #1877f2;
+    background-color: #f0f2f5;
+}
+
+body.light-theme .upload-box.dragover {
+    border-color: #1877f2;
+    background-color: #e7f0fd;
+}
+
+body.light-theme .upload-icon svg {
+    color: #8a8d91;
+}
+
+body.light-theme .upload-text {
+    color: #606770;
+}
+
+/* Filename Box */
+body.light-theme .filename-box {
+    background-color: #ffffff;
+    border-color: #dddfe2;
+}
+
+body.light-theme .filename-input {
+    color: #1c1e21;
+}
+
+body.light-theme .filename-input::placeholder {
+    color: #8a8d91;
+}
+
+/* Prompt Box */
+body.light-theme .prompt-box {
+    background-color: #ffffff;
+    border-color: #dddfe2;
+}
+
+body.light-theme .prompt-textarea {
+    color: #1c1e21;
+}
+
+body.light-theme .prompt-textarea::placeholder {
+    color: #8a8d91;
+}
+
+/* Generate Button */
+body.light-theme .generate-btn {
+    background-color: #1877f2;
+    color: #ffffff;
+}
+
+body.light-theme .generate-btn:hover {
+    background-color: #166fe5;
+}
+
+body.light-theme .generate-btn:disabled {
+    background-color: #bcc0c4;
+    color: #ffffff;
+}
+
+/* Preview */
+body.light-theme .preview-container {
+    background-color: #ffffff;
+    border: 1px solid #dddfe2;
+}
+
+body.light-theme .preview-text {
+    color: #8a8d91;
+}
+
+body.light-theme .preview-icon {
+    background-color: #dddfe2;
+}
+
+/* Spinner */
+body.light-theme .spinner {
+    border-color: #dddfe2;
+    border-top-color: #1877f2;
+}
+
+/* Reset Modal */
+body.light-theme .reset-modal-box {
+    background-color: #ffffff;
+    border-color: #dddfe2;
+}
+
+body.light-theme .reset-modal-title {
+    color: #1c1e21;
+}
+
+body.light-theme .reset-modal-subtitle {
+    color: #606770;
+}
+
+body.light-theme .reset-modal-subtitle strong {
+    color: #1c1e21;
+}
+
+body.light-theme .reset-modal-close {
+    color: #8a8d91;
+}
+
+body.light-theme .reset-modal-close:hover {
+    color: #1877f2;
+}
+
+/* App locked in light mode */
+body.light-theme .app-locked {
+    filter: blur(1px);
+}
