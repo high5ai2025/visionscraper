@@ -642,5 +642,14 @@ function showLoading(show) {
     loadingOverlay.style.display = show ? 'flex' : 'none';
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// ========================
+// THEME TOGGLE
+// ========================
 
+function toggleTheme() {
+    const isLight = document.body.classList.toggle('light-theme');
+    document.getElementById('themeIcon').textContent  = isLight ? '🌙' : '☀️';
+    document.getElementById('themeLabel').textContent = isLight ? 'DARK' : 'LIGHT';
+}
+
+document.addEventListener('DOMContentLoaded', init);
