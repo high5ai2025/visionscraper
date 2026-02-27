@@ -4,7 +4,7 @@ const CONFIG = {
     N8N_SIGNUP:    'https://high5ai.app.n8n.cloud/webhook/signup',
     N8N_SIGNIN:    'https://high5ai.app.n8n.cloud/webhook/signin',
     N8N_FORGOT:    'https://high5ai.app.n8n.cloud/webhook/forgot-password',
-    APPS_SCRIPT:   'https://script.google.com/macros/s/AKfycbzD2niEzWYdsUR0bXc7pykd1Pqx5OtaK97iZc5_5IzO2ImegcqxEVJw27Nbu3ySaTUlCw/exec',
+    APPS_SCRIPT:   'https://script.google.com/macros/s/AKfycbxDsoin-DYVrWkQDtnCkWSPCNVSL35xH_KDCRKiOg8i6PI7-qxgicXejNJUyoZBYGGV1Q/exec',
     IDLE_TIMEOUT_MS: 3 * 60 * 1000 // 3 minutes
 };
 
@@ -653,3 +653,4 @@ function toggleTheme() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
